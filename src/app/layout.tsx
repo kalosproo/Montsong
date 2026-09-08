@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { MiniPlayer } from '@/components/player/MiniPlayer';
 import { SiteFooter } from '@/components/SiteFooter';
 import { SiteHeader } from '@/components/SiteHeader';
-import { getSiteCopy, siteUrl } from '@/lib/site';
+import { getSiteCopy, siteOrigin, siteUrl } from '@/lib/site';
 
 import './globals.css';
 
@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const copy = await getSiteCopy();
 
   return {
-    metadataBase: new URL(siteUrl()),
+    metadataBase: siteOrigin(),
     title: {
       default: `${copy.name} — songs, ringtones & BGM`,
       template: `%s · ${copy.name}`,

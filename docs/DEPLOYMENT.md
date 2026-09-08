@@ -3,9 +3,46 @@
 MontSong needs one thing from its host: **a long-running Node process with a
 persistent disk.** Everything else follows from that.
 
+## Environment configuration
+
+### Local Next.js development
+
+Copy the local template, then replace its Telegram and admin placeholders with
+real values:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Keep `NEXT_PUBLIC_SITE_URL="http://localhost:3000"` for local development.
+`.env.local` is ignored by Git and must never be committed. The two
+`NEXT_PUBLIC_*` variables are public configuration and are bundled into
+client-facing output; do not place credentials in either one.
+
+### Vercel environment variables
+
+Vercel must provide this public **build-time** variable for every production
+deployment (use the actual Vercel or custom domain, without a path):
+
+```text
+NEXT_PUBLIC_SITE_URL=https://YOUR-VERCEL-DOMAIN
+```
+
+Also configure `NEXT_PUBLIC_SITE_NAME` if the default is not suitable. Set
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_STORAGE_CHAT_ID`, `ADMIN_USERNAME`,
+`ADMIN_PASSWORD_HASH`, and `AUTH_SECRET` as server-side Vercel environment
+variables; never prefix them with `NEXT_PUBLIC_`. Configure `DATABASE_URL`,
+media-cache paths, upload limits, and optional Telegram settings as appropriate
+for the deployment platform.
+
+`NEXT_PUBLIC_SITE_URL` must be an absolute HTTP(S) origin. Local development
+falls back to `http://localhost:3000` when it is unset, but production builds
+fail with an actionable configuration error instead of publishing localhost
+canonical URLs.
+
 ---
 
-## Why not Vercel (or any serverless platform)
+## Why not Vercel (or any serverless platform) for the full application
 
 Worth stating plainly, because it is the default answer for a Next.js app and it
 is the wrong one here. Three independent blockers:
@@ -25,6 +62,11 @@ You could work around all three — direct-to-storage uploads, external object
 storage, a managed database — but that is a different, larger architecture for
 no benefit at this size. **A single small container with a volume is the right
 shape**, and it is cheap.
+
+The Vercel variables above make the Next.js build and public metadata
+configuration valid. They do not remove these runtime storage limitations; use
+a persistent-disk host for the application's current SQLite, cache, and upload
+architecture.
 
 **Hosts that fit:** Fly.io (with a volume), Railway, Render, Hetzner, DigitalOcean,
 a Raspberry Pi on a home connection, or any VPS. 512 MB of RAM is comfortable;

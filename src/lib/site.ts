@@ -2,6 +2,8 @@ import 'server-only';
 
 import { prisma } from './db';
 
+export { siteOrigin, siteUrl } from './site-url';
+
 /**
  * Owner-editable site copy, with sensible defaults so a fresh install reads
  * like a finished site rather than a template full of placeholders.
@@ -49,10 +51,4 @@ export async function setSiteCopy(values: { tagline?: string; about?: string }):
       }),
     ),
   );
-}
-
-/** Absolute site origin, used for canonical URLs and Open Graph tags. */
-export function siteUrl(path = ''): string {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/+$/, '');
-  return `${base}${path.startsWith('/') ? path : `/${path}`}`;
 }
