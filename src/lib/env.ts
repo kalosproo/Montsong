@@ -10,6 +10,8 @@ import path from 'node:path';
  */
 import 'server-only';
 
+import { siteOrigin } from './site-url';
+
 class ConfigError extends Error {
   override name = 'ConfigError';
 }
@@ -171,8 +173,11 @@ export function getConfig(): AppConfig {
       passwordHash,
       secret,
     },
+    // NEXT_PUBLIC_* values are public build-time configuration. They are kept
+    // separate from the secrets above and siteOrigin validates the URL before
+    // it can be used for canonical metadata or sitemap entries.
     site: {
-      url: (optional('NEXT_PUBLIC_SITE_URL') ?? 'http://localhost:3000').replace(/\/+$/, ''),
+      url: siteOrigin().origin,
       name: optional('NEXT_PUBLIC_SITE_NAME') ?? 'MontSong',
     },
     cache: {
