@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "https://montsong.onrender.com/$1"
+    }
+  ]
+}
